@@ -4,11 +4,9 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 html {
     scroll-behavior: smooth;
 }
-
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
@@ -18,20 +16,18 @@ body {
     background-repeat: no-repeat;
     overflow-x: hidden;
 }
-
 .container {
     max-width: 1440px;
     margin: 0 auto;
     padding: 0 32px; /* give more lateral breathing room */
 }
-
 .hidden {
     display: none !important;
     opacity: 0;
     visibility: hidden;
 }
 
-/* Preloader Styles */
+/* Enhanced Preloader Styles with Mobile Fallback */
 .preloader {
     position: fixed;
     inset: 0;
@@ -53,7 +49,7 @@ body {
     pointer-events: none;
 }
 
-/* Make video feel embedded/smaller and "built-in" */
+/* Video preloader for desktop */
 .preloader-video {
     max-width: min(42vw, 360px);
     width: clamp(220px, 38vw, 360px);
@@ -61,10 +57,57 @@ body {
     border: none;
     outline: none;
     display: block;
-    background: transparent; /* no visible frame */
-    box-shadow: none;        /* remove all shadows */
-    border-radius: 0;        /* no rounded corners */
-    transform: none;         /* no offset */
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    transform: none;
+}
+
+/* Mobile fallback animation container */
+.preloader-fallback {
+    display: none; /* Hidden by default, shown on mobile via JS */
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* CSS Animation for mobile fallback */
+.preloader-spinner {
+    width: 80px;
+    height: 80px;
+    border: 3px solid rgba(75, 59, 97, 0.2);
+    border-top: 3px solid #4b3b61;
+    border-radius: 50%;
+    animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+}
+
+.preloader-text {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 600;
+    color: #4b3b61;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0;
+    animation: fadeInOut 2s ease-in-out infinite;
+}
+
+/* Progress bar for mobile */
+.preloader-progress {
+    width: 200px;
+    height: 2px;
+    background-color: rgba(75, 59, 97, 0.2);
+    border-radius: 1px;
+    overflow: hidden;
+    position: relative;
+}
+
+.preloader-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #462254, #5A2D66, #6E3778);
+    width: 0%;
+    border-radius: 1px;
+    animation: progressFill 3s ease-out infinite;
 }
 
 /* Remove any frames/vignettes so the background is purely the page color */
@@ -75,6 +118,23 @@ body {
 .preloader-logo { display: none; }
 .preloader-image { display: none; }
 .preloader-brand { display: none; }
+
+/* Animations for mobile fallback */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes progressFill {
+    0% { width: 0%; }
+    70% { width: 85%; }
+    100% { width: 100%; }
+}
 
 @keyframes brandPulse {
     0%, 100% { transform: scale(1); opacity: 0.8; }
@@ -95,22 +155,18 @@ h1, h2, h3 {
     margin-bottom: 1rem;
     color: #4b3b61;
 }
-
 h1 {
     font-size: 2.5rem;
     font-weight: 600;
 }
-
 h2 {
     font-size: 2rem;
     font-weight: 600;
 }
-
 h3 {
     font-size: 1.5rem;
     font-weight: 400;
 }
-
 p {
     margin-bottom: 1rem;
     color: #4b3b61;
@@ -131,7 +187,6 @@ p {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-
 .cta-button:hover, .product-cta:hover, .signup-form button:hover {
     background: linear-gradient(135deg, #3A1C42 0%, #4A2554 50%, #5A2D66 100%);
     transform: translateY(-2px);
@@ -170,7 +225,6 @@ p {
     opacity: 0;
     animation: badgeFade 900ms ease-out 900ms forwards;
 }
-
 .hero-badge-bottom-left span {
     display: inline-block;
     font-family: 'Cinzel', 'Playfair Display', serif;
@@ -257,7 +311,6 @@ p {
     max-width: 520px;
     justify-self: stretch;
 }
-
 .hero-gallery {
     grid-column: 6 / span 4; /* central anchor */
     display: grid;
@@ -267,7 +320,6 @@ p {
     width: 100%;
     max-width: 560px;
 }
-
 .hero-sacred-info {
     grid-column: 10 / span 2; /* right rail */
     justify-self: stretch;
@@ -288,7 +340,6 @@ p {
     transform: none !important;
     animation: none !important;
 }
-
 .hero-description {
     font-family: 'Inter', sans-serif;
     font-size: clamp(1.05rem, 1.2vw, 1.15rem);
@@ -320,17 +371,14 @@ p {
     transform: none !important;
     animation: none !important;
 }
-
 .hero-invitation:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 30px rgba(70,34,84,0.32);
     background: linear-gradient(135deg, #3A1C42 0%, #4A2554 50%, #5A2D66 100%);
 }
-
 .hero-invitation::after {
     display: none; /* remove whisper underline */
 }
-
 .hero-essence {
     display: flex;
     flex-direction: column;
@@ -343,7 +391,6 @@ p {
     grid-row: 1;
     height: 100%;
 }
-
 .gallery-secondary {
     grid-row: 2;
     display: grid;
@@ -351,12 +398,10 @@ p {
     gap: 14px;
     height: 100%;
 }
-
 .gallery-primary {
     grid-row: 1;
     height: 100%;
 }
-
 .gallery-secondary {
     grid-row: 2;
     display: grid;
@@ -364,7 +409,6 @@ p {
     gap: 18px;
     height: 100%;
 }
-
 .gallery-image {
     width: 100%;
     height: 100%;
@@ -376,22 +420,18 @@ p {
     object-position: center;
     background-color: #f5e2c9; /* match canvas behind transparent PNGs */
 }
-
 .gallery-image.primary {
     animation: gentleArrive 0.9s ease-out 0.3s forwards;
     aspect-ratio: 5 / 7; /* elegant tall */
 }
-
 .gallery-image.secondary:nth-child(1) {
     animation: gentleArrive 0.9s ease-out 0.5s forwards;
     aspect-ratio: 4 / 5;
 }
-
 .gallery-image.secondary:nth-child(2) {
     animation: gentleArrive 0.9s ease-out 0.6s forwards;
     aspect-ratio: 4 / 5;
 }
-
 .gallery-image:hover {
     transform: translateY(-5px) scale(1.02);
     filter: drop-shadow(12px 18px 35px rgba(70, 34, 84, 0.25));
@@ -412,7 +452,7 @@ p {
     animation: artFloatInLeft 1200ms cubic-bezier(0.2, 0.7, 0, 1) 300ms forwards;
 }
 
-/* Adjust for smaller laptops so it doesn’t crowd the text */
+/* Adjust for smaller laptops so it doesn't crowd the text */
 @media (max-width: 1200px) {
     .hero-freeform-left {
         width: min(34vw, 320px);
@@ -535,7 +575,7 @@ p {
 .hero-subtitle {
     font-family: 'Cinzel', 'Playfair Display', serif;
     font-size: clamp(0.95rem, 2.2vw, 1.2rem); /* slightly larger */
-    font-weight: 600; /* lighter than title’s 700 */
+    font-weight: 600; /* lighter than title's 700 */
     color: #4b3b61;
     line-height: 1.2; /* tighter line-height */
     letter-spacing: 0.22em; /* longer letters via increased tracking */
@@ -552,7 +592,6 @@ p {
 
 /* No CTA in minimal hero */
 .hero-invitation { display: none !important; }
-
 .hero-invitation::after {
     content: '';
     position: absolute;
@@ -565,11 +604,9 @@ p {
     transform-origin: left;
     transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
-
 .hero-invitation:hover {
     color: #282626;
 }
-
 .hero-invitation:hover::after {
     transform: scaleX(1);
 }
@@ -581,7 +618,6 @@ p {
     align-self: start;
     margin-top: 0;
 }
-
 .sacred-details {
     display: flex;
     flex-direction: column;
@@ -589,7 +625,6 @@ p {
     padding-left: 16px;
     border-left: 2px solid rgba(70, 34, 84, 0.18);
 }
-
 .detail-label {
     font-size: 0.72rem;
     font-weight: 700;
@@ -597,14 +632,12 @@ p {
     text-transform: uppercase;
     letter-spacing: 0.16em;
 }
-
 .detail-value {
     font-size: 1rem;
     font-weight: 400;
     color: #2f2b2b;
     line-height: 1.4;
 }
-
 .sacred-details {
     display: flex;
     flex-direction: column;
@@ -612,14 +645,12 @@ p {
     padding-left: 14px;
     border-left: 1px solid rgba(70, 34, 84, 0.15);
 }
-
 .detail-item {
     display: flex;
     flex-direction: column;
     gap: 6px;
     text-align: left;
 }
-
 .detail-label {
     font-family: 'Inter', sans-serif;
     font-size: 0.72rem;
@@ -628,7 +659,6 @@ p {
     text-transform: uppercase;
     letter-spacing: 0.16em;
 }
-
 .detail-value {
     font-family: 'Inter', sans-serif;
     font-size: 0.98rem;
@@ -651,13 +681,11 @@ p {
         radial-gradient(60% 60% at 50% 0%, rgba(70,34,84,0.06) 0%, rgba(70,34,84,0.02) 55%, rgba(245,226,201,0) 80%),
         linear-gradient(135deg, #f0ebe0 0%, #eddec4 100%);
 }
-
 .philosophy-content {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
 }
-
 .philosophy-text p {
     font-size: 1.3rem;
     line-height: 1.8;
@@ -670,13 +698,11 @@ p {
 .rituals {
     padding: 100px 0;
 }
-
 .section-title {
     text-align: center;
     color: #4b3b61;
     margin-bottom: 1rem;
 }
-
 .section-intro {
     text-align: center;
     font-size: 1.1rem;
@@ -684,7 +710,6 @@ p {
     margin-bottom: 4rem;
     font-weight: 300;
 }
-
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -692,7 +717,6 @@ p {
     max-width: 1000px;
     margin: 0 auto;
 }
-
 .product-card {
     background: #f5e2c9; /* match */
     border-radius: 10px;
@@ -702,16 +726,13 @@ p {
     border: 1px solid rgba(70, 34, 84, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 30px rgba(70, 34, 84, 0.15);
 }
-
 .product-image {
     margin-bottom: 1.5rem;
 }
-
 .placeholder-image {
     width: 100%;
     height: 220px;
@@ -724,19 +745,16 @@ p {
     color: #7f6b52;
     font-style: italic;
 }
-
 .product-name {
     color: #4b3b61;
     margin-bottom: 1rem;
 }
-
 .product-description {
     color: #4b3b61;
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
     line-height: 1.6;
 }
-
 .product-price {
     font-size: 1.5rem;
     font-weight: 600;
@@ -744,7 +762,6 @@ p {
     margin-bottom: 1.5rem;
     font-family: 'Playfair Display', serif;
 }
-
 .product-cta {
     padding: 12px 24px;
     font-size: 0.9rem;
@@ -755,7 +772,6 @@ p {
     padding: 100px 0;
     background: linear-gradient(135deg, #f0ebe0 0%, #eddec4 100%);
 }
-
 .usp-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -763,12 +779,10 @@ p {
     max-width: 1000px;
     margin: 0 auto;
 }
-
 .usp-item {
     text-align: center;
     padding: 2rem;
 }
-
 .usp-item i {
     font-size: 2.5rem;
     background: linear-gradient(135deg, #462254 0%, #5A2D66 50%, #D4AF37 100%);
@@ -777,12 +791,10 @@ p {
     background-clip: text;
     margin-bottom: 1.5rem;
 }
-
 .usp-item h3 {
     color: #4b3b61;
     margin-bottom: 1rem;
 }
-
 .usp-item p {
     color: #4b3b61;
     font-weight: 300;
@@ -793,13 +805,11 @@ p {
 .testimonials {
     padding: 100px 0;
 }
-
 .testimonial {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
 }
-
 .testimonial p {
     font-size: 1.4rem;
     font-style: italic;
@@ -808,7 +818,6 @@ p {
     margin-bottom: 2rem;
     font-weight: 300;
 }
-
 .testimonial cite {
     font-size: 1rem;
     color: #4b3b61;
@@ -821,22 +830,18 @@ p {
     padding: 100px 0;
     background: linear-gradient(135deg, #f0ebe0 0%, #eddec4 100%);
 }
-
 .inner-circle .section-title {
     margin-bottom: 1rem;
 }
-
 .inner-circle .section-intro {
     margin-bottom: 3rem;
 }
-
 .signup-form {
     display: flex;
     max-width: 500px;
     margin: 0 auto;
     gap: 1rem;
 }
-
 .signup-form input {
     flex: 1;
     padding: 16px 20px;
@@ -847,16 +852,15 @@ p {
     background-color: #f5e2c9;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
 .signup-form input:focus {
     outline: none;
     border-color: #462254;
     box-shadow: 0 0 0 3px rgba(70, 34, 84, 0.1);
 }
-
 .signup-form button {
     white-space: nowrap;
 }
+
 
 /* Footer */
 .footer {
@@ -864,7 +868,6 @@ p {
     background-color: #2D2D2D;
     color: #eddec4;
 }
-
 .footer-content {
     display: flex;
     justify-content: space-between;
@@ -872,12 +875,10 @@ p {
     flex-wrap: wrap;
     gap: 2rem;
 }
-
 .social-links {
     display: flex;
     gap: 1.5rem;
 }
-
 .social-links a {
     background: linear-gradient(135deg, #462254 0%, #5A2D66 50%, #D4AF37 100%);
     -webkit-background-clip: text;
@@ -886,29 +887,24 @@ p {
     font-size: 1.5rem;
     transition: all 0.3s ease;
 }
-
 .social-links a:hover {
     background: linear-gradient(135deg, #3A1C42 0%, #4A2554 50%, #C19B26 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transform: translateY(-2px);
 }
-
 .footer-info {
     text-align: right;
 }
-
 .footer-info a {
     color: #4b3b61;
     text-decoration: none;
     transition: color 0.3s ease;
 }
-
 .footer-info a:hover {
     color: #4b3b61;
     opacity: 0.85;
 }
-
 .footer-info p {
     margin-top: 0.5rem;
     color: #4b3b61;
@@ -931,7 +927,18 @@ p {
     .container {
         padding: 0 15px;
     }
-
+    
+    /* Mobile-specific preloader adjustments */
+    /* Show the video on mobile as well (Option A) */
+    .preloader-video {
+        display: block;
+    }
+    
+    /* Keep fallback hidden since we're using the video on mobile */
+    .preloader-fallback {
+        display: none;
+    }
+    
     /* Mobile-first hero: vertical stack, safe paddings */
     .hero {
         min-height: 100vh;
@@ -943,7 +950,7 @@ p {
         text-align: center;
         overflow: hidden; /* hide overflow from freeform art */
     }
-
+    
     /* Scale down hero text with subtle entrance preserved */
     .hero-title, .hero-statement {
         font-size: clamp(2rem, 10vw, 3rem);
@@ -964,6 +971,10 @@ p {
         width: 88px;
         margin: 8px auto 6px;
         animation-delay: 520ms;
+        opacity: 0.0;            /* animate in */
+        transform-origin: left;
+        transform: scaleX(0.82);
+        animation: lineReveal 900ms ease-out 700ms forwards;
     }
     .hero-domain {
         font-size: clamp(0.7rem, 3vw, 0.85rem);
@@ -971,18 +982,6 @@ p {
         margin-top: 0;
         animation-delay: 620ms;
     }
-.hero-underline {
-    display: inline-block;
-    width: 120px;            /* small, understated */
-    height: 1px;
-    background-color: #4b3b61; /* match text color */
-    opacity: 0.0;            /* animate in */
-    margin: 10px auto 8px;   /* spacing around line */
-    z-index: 2;
-    transform-origin: left;
-    transform: scaleX(0.82);
-    animation: lineReveal 900ms ease-out 700ms forwards;
-}
 
     /* Reposition freeform images to avoid overlaps and keep them decorative */
     .hero-freeform-left {
@@ -993,7 +992,6 @@ p {
         opacity: 0.85;
         z-index: 0;
     }
-
     .hero-freeform-ornament {
         left: 78%;
         top: 26%;
@@ -1002,7 +1000,6 @@ p {
         opacity: 0.9;
         z-index: 0;
     }
-
     .hero-freeform-rose {
         width: min(54vw, 220px);
         right: -8vw;                  /* push partially off-canvas right */
@@ -1011,7 +1008,7 @@ p {
         opacity: 0.9;
         z-index: 0;                   /* always behind text */
     }
-
+    
     /* Badge: pull inwards and reduce size to sit near dropper area */
     .hero-badge-bottom-left {
         left: 6vw;
@@ -1021,7 +1018,7 @@ p {
         font-size: clamp(0.72rem, 2.8vw, 0.9rem);
         letter-spacing: 0.18em;
     }
-
+    
     /* Footer and others remain stacked */
     .footer-content {
         flex-direction: column;
@@ -1030,7 +1027,7 @@ p {
     .footer-info {
         text-align: center;
     }
-
+    
     /* Legacy layout pieces not used on mobile hero are neutralized */
     .hero-main,
     .hero-gallery,
@@ -1065,7 +1062,6 @@ p {
         font-size: clamp(0.66rem, 3.2vw, 0.8rem);
         letter-spacing: 0.15em;
     }
-
     .hero-freeform-left {
         width: min(58vw, 200px);
         left: -10vw;
@@ -1087,7 +1083,6 @@ p {
         transform: rotate(10deg);
         opacity: 0.9;
     }
-
     .hero-badge-bottom-left {
         left: 8vw;
         bottom: 16vh;
@@ -1095,7 +1090,7 @@ p {
     .hero-badge-bottom-left span {
         font-size: clamp(0.7rem, 3.2vw, 0.85rem);
     }
-} /* <-- properly close the @media (max-width: 480px) block */
+}
 
 /* Classy motion system */
 @keyframes veilFade {

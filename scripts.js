@@ -1,6 +1,12 @@
 /**
  * Home page preloader: play full video, then reveal content.
  * Only runs if #preloader exists (i.e., on index.html).
+ *
+ * Mobile-specific improvements:
+ * - Ensure muted, inline autoplay on iOS (no big play button).
+ * - Programmatic play() attempt; on failure, one-time user-gesture fallback.
+ * - Reveal site sooner on mobile (best default: short branded moment, then fade).
+ * Desktop behavior is preserved: wait for full video end before reveal.
  */
 document.addEventListener('DOMContentLoaded', function() {
     const preloader = document.getElementById('preloader');
@@ -25,21 +31,40 @@ document.addEventListener('DOMContentLoaded', function() {
         mainContent.setAttribute('aria-hidden', 'true');
     }
 
-    // Ensure video is configured for inline autoplay on mobile
+    // Feature-detect a "mobile" context without breaking desktop:
+    // Small viewport OR iOS userAgent implies mobile handling.
+    const isSmallViewport = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+    const ua = (navigator.userAgent || '').toLowerCase();
+    const isIOS = /iphone|ipad|ipod/.test(ua);
+    const isMobile = isSmallViewport || isIOS;
+
+    // Ensure video is configured for inline autoplay (esp. iOS)
     preloaderVideo.setAttribute('muted', '');
     preloaderVideo.muted = true;
     preloaderVideo.setAttribute('playsinline', '');
+    preloaderVideo.setAttribute('webkit-playsinline', ''); // extra-safe for older iOS
     preloaderVideo.playsInline = true;
     preloaderVideo.autoplay = true;
 
-    // If autoplay is blocked, attempt play programmatically
-    const tryPlay = () => preloaderVideo.play().catch(() => { /* ignore */ });
-    tryPlay();
+    // Try to autoplay immediately
+    const attemptPlay = () => preloaderVideo.play().catch(() => Promise.reject());
 
-    // When the video finishes, fade out preloader and reveal content
-    const finish = () => {
+    // Fallback: kick playback on first user gesture if autoplay was blocked
+    const addUserGestureKick = () => {
+        const kick = () => {
+            preloaderVideo.play().finally(() => {
+                document.removeEventListener('touchstart', kick, { capture: true });
+                document.removeEventListener('click', kick, { capture: true });
+            });
+        };
+        // Use capture to get earliest possible event on iOS Safari
+        document.addEventListener('touchstart', kick, { once: true, capture: true });
+        document.addEventListener('click', kick, { once: true, capture: true });
+    };
+
+    // Reveal logic shared by desktop/mobile
+    const reveal = () => {
         preloader.classList.add('is-hidden');
-        // Reveal main content after fade
         setTimeout(() => {
             if (mainContent) {
                 mainContent.classList.remove('hidden');
@@ -48,23 +73,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 mainContent.style.visibility = 'visible';
                 mainContent.removeAttribute('aria-hidden');
             }
-            // Remove from DOM to avoid tab-stop
             if (preloader && preloader.parentNode) preloader.parentNode.removeChild(preloader);
-        }, 600); // match CSS transition duration
+        }, 600); // match CSS transition
     };
 
-    // Play full video: wait for ended
-    preloaderVideo.addEventListener('ended', finish);
+    // Desktop behavior: wait for full video end (unchanged)
+    const setupDesktopFlow = () => {
+        const finish = () => {
+            reveal();
+        };
+        preloaderVideo.addEventListener('ended', finish);
 
-    // Robustness: if metadata indicates duration is 0 (corrupt) or 'ended' never fires, fallback after 12s
-    const FALLBACK_MS = 12000;
-    const fallbackTimer = setTimeout(() => {
-        preloaderVideo.removeEventListener('ended', finish);
-        finish();
-    }, FALLBACK_MS);
+        // Robustness fallback in case 'ended' never fires
+        const DESKTOP_FALLBACK_MS = 12000;
+        const fallbackTimer = setTimeout(() => {
+            preloaderVideo.removeEventListener('ended', finish);
+            reveal();
+        }, DESKTOP_FALLBACK_MS);
+        preloaderVideo.addEventListener('ended', () => clearTimeout(fallbackTimer));
+    };
 
-    // Clear fallback if ended occurs naturally
-    preloaderVideo.addEventListener('ended', () => clearTimeout(fallbackTimer));
+    // Mobile behavior: best default
+    // - Ensure playback starts (muted inline). If blocked, add one-time gesture kick.
+    // - Show preloader briefly, then reveal site after short timeout (faster than waiting full video).
+    const setupMobileFlow = () => {
+        // Attempt autoplay; if blocked, wire the gesture fallback
+        attemptPlay().catch(() => addUserGestureKick());
+
+        // Short, branded preloader experience then reveal.
+        // Tune as desired; chosen to balance brand moment and quick access.
+        const MOBILE_REVEAL_MS = 2500;
+        const timer = setTimeout(reveal, MOBILE_REVEAL_MS);
+
+        // If user taps and playback begins immediately, we still keep the short timer.
+        // Optional: if you want to reveal on first frame, listen to 'playing' and reduce delay.
+        // preloaderVideo.addEventListener('playing', () => { /* optionally adjust */ }, { once: true });
+    };
+
+    if (isMobile) {
+        setupMobileFlow();
+    } else {
+        setupDesktopFlow();
+        // Also attempt autoplay on desktop; it's already working per user, but harmless to ensure muted state.
+        attemptPlay().catch(() => { /* desktop typically allows, ignore if blocked */ });
+    }
 });
 
 // Smooth scrolling function
