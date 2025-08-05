@@ -65,7 +65,18 @@ body {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    /* NUCLEAR OPTION: Make video completely unclickable */
     pointer-events: none;
+}
+
+/* THE SPECIFIC OVERLAY PLAY BUTTON - this is the key selector from research */
+video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
 /* Aggressively hide ALL video controls and play buttons */

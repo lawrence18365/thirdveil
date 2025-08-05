@@ -53,28 +53,30 @@ document.addEventListener('DOMContentLoaded', function() {
     preloaderVideo.setAttribute('disablepictureinpicture', '');
     preloaderVideo.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
     
-    // Force remove any control elements that Chrome might add
-    const forceRemoveControls = () => {
+    // RESEARCH-BASED: Force removal of overlay play button specifically
+    const destroyOverlayButton = () => {
         preloaderVideo.controls = false;
         preloaderVideo.removeAttribute('controls');
         
         // Hide any shadow DOM controls
         const shadowRoot = preloaderVideo.shadowRoot;
         if (shadowRoot) {
-            const controls = shadowRoot.querySelectorAll('*');
-            controls.forEach(control => {
-                if (control.style) {
-                    control.style.display = 'none';
-                    control.style.opacity = '0';
-                    control.style.visibility = 'hidden';
+            const overlayButtons = shadowRoot.querySelectorAll('*[pseudo*="overlay"], *[class*="overlay"], *[class*="play"]');
+            overlayButtons.forEach(button => {
+                if (button.style) {
+                    button.style.display = 'none';
+                    button.style.opacity = '0';
+                    button.style.visibility = 'hidden';
+                    button.style.width = '0';
+                    button.style.height = '0';
                 }
             });
         }
     };
     
-    // Continuously enforce no controls
-    forceRemoveControls();
-    setInterval(forceRemoveControls, 100);
+    // Apply immediately and continuously
+    destroyOverlayButton();
+    setInterval(destroyOverlayButton, 50); // More frequent for stubborn buttons
 
     // Try to autoplay immediately
     const attemptPlay = () => preloaderVideo.play().catch(() => Promise.reject());
