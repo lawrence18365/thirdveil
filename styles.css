@@ -1,0 +1,1143 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: #4b3b61; /* global text color */
+    background-color: #f5e2c9; /* match loader + assets */
+    background-image: none;
+    background-repeat: no-repeat;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 32px; /* give more lateral breathing room */
+}
+
+.hidden {
+    display: none !important;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Preloader Styles */
+.preloader {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ede6d2; /* requested preloader background */
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+.preloader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Make video feel embedded/smaller and "built-in" */
+.preloader-video {
+    max-width: min(42vw, 360px);
+    width: clamp(220px, 38vw, 360px);
+    height: auto;
+    border: none;
+    outline: none;
+    display: block;
+    background: transparent; /* no visible frame */
+    box-shadow: none;        /* remove all shadows */
+    border-radius: 0;        /* no rounded corners */
+    transform: none;         /* no offset */
+}
+
+/* Remove any frames/vignettes so the background is purely the page color */
+.preloader::before { content: none; }
+.preloader::after { content: none; }
+
+/* Keep legacy preloader elements harmless if present */
+.preloader-logo { display: none; }
+.preloader-image { display: none; }
+.preloader-brand { display: none; }
+
+@keyframes brandPulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: scale(0.8); }
+    30% { opacity: 1; transform: scale(1); }
+    70% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.1); }
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: #4b3b61;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+p {
+    margin-bottom: 1rem;
+    color: #4b3b61;
+}
+
+/* Buttons */
+.cta-button, .product-cta, .signup-form button {
+    background: linear-gradient(135deg, #462254 0%, #5A2D66 50%, #6E3778 100%);
+    color: #eddec4;
+    border: none;
+    padding: 16px 32px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-button:hover, .product-cta:hover, .signup-form button:hover {
+    background: linear-gradient(135deg, #3A1C42 0%, #4A2554 50%, #5A2D66 100%);
+    transform: translateY(-2px);
+}
+
+/* Hero Section – minimal centered */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    position: relative; /* allow freeform image to be absolutely positioned */
+    width: 100%;
+    margin: 0;
+    isolation: isolate;
+    text-align: center;
+}
+.hero-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* tighter pairing between title and subtitle */
+    align-items: center;
+    position: relative;
+    z-index: 2; /* above decorative asset */
+}
+
+/* Bottom-left badge integrated with hero (no shadow, no rotation) */
+.hero-badge-bottom-left {
+    position: absolute;
+    left: max(6vw, 72px);   /* bring it closer into the hero */
+    bottom: max(10vh, 96px);
+    transform: none;        /* no degree/rotation */
+    z-index: 2;             /* above freeform images */
+    pointer-events: none;
+    opacity: 0;
+    animation: badgeFade 900ms ease-out 900ms forwards;
+}
+
+.hero-badge-bottom-left span {
+    display: inline-block;
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-weight: 600;                 /* lighter like subtitle */
+    text-transform: uppercase;
+    letter-spacing: 0.20em;           /* similar to subtitle, slightly tighter than before */
+    line-height: 1.2;                 /* match subtitle rhythm */
+    color: #4b3b61;
+    font-size: clamp(0.85rem, 1.4vw, 1rem);  /* a little smaller than subtitle */
+    padding: 0;                       /* no background glaze */
+    background: transparent;          /* no background */
+    border-radius: 0;
+    box-shadow: none;                 /* no shadow */
+}
+
+/* Slightly tweak placement on laptop and mobile */
+@media (max-width: 1200px) {
+    .hero-badge-bottom-left {
+        left: max(8vw, 56px);
+        bottom: max(12vh, 88px);
+        transform: none;
+    }
+}
+@media (max-width: 768px) {
+    .hero-badge-bottom-left {
+        left: max(10vw, 42px);
+        bottom: max(14vh, 72px);
+        transform: none;
+    }
+    .hero-badge-bottom-left span {
+        font-size: clamp(0.8rem, 2.4vw, 0.95rem);
+        letter-spacing: 0.2em;
+        padding: 0;
+    }
+}
+
+/* Subtle underline beneath subtitle */
+.hero-underline {
+    display: inline-block;
+    width: 120px;            /* small, understated */
+    height: 1px;
+    background-color: #4b3b61; /* match text color */
+    opacity: 0.6;            /* subtle */
+    margin: 10px auto 8px;   /* spacing around line */
+    z-index: 2;
+}
+
+/* Domain label beneath underline */
+.hero-domain {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-size: clamp(0.75rem, 1.6vw, 0.95rem);
+    font-weight: 600;
+    letter-spacing: 0.18em;  /* extended tracking */
+    text-transform: uppercase;
+    color: #4b3b61;
+    margin-top: 2px;
+    text-align: center;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(6px);
+    animation: subtleRise 900ms cubic-bezier(0.2, 0.7, 0, 1) 820ms forwards;
+}
+
+/* Ambient vignette and soft reveal */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: -8% -6% -6% -6%;
+    background: radial-gradient(60% 50% at 50% 35%, rgba(75, 59, 97, 0.10) 0%, rgba(75, 59, 97, 0.06) 40%, rgba(245, 226, 201, 0) 75%);
+    opacity: 0;
+    transform: scale(1.03);
+    animation: veilFade 1.8s ease-out 0.2s forwards;
+}
+
+/* Not used in minimal hero, keep harmless but neutralize spacing */
+.hero-content {
+    display: contents;
+    padding: 0;
+}
+
+/* Compose: Headline wraps with central hero image; right digest aligned */
+.hero-main {
+    grid-column: 2 / span 4; /* left block anchored to grid */
+    max-width: 520px;
+    justify-self: stretch;
+}
+
+.hero-gallery {
+    grid-column: 6 / span 4; /* central anchor */
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    justify-self: center;
+    width: 100%;
+    max-width: 560px;
+}
+
+.hero-sacred-info {
+    grid-column: 10 / span 2; /* right rail */
+    justify-self: stretch;
+    align-self: start;
+    margin-top: 0;
+}
+
+/* Left block hierarchy (neutralized for minimal hero) */
+.hero-statement {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.4rem, 5.2vw, 4.6rem);
+    font-weight: 700;
+    color: #2b2626;
+    line-height: 1.02;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.01em;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+}
+
+.hero-description {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1.05rem, 1.2vw, 1.15rem);
+    font-weight: 300;
+    color: #4a4040;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+    margin: 0 0 20px 0;
+    max-width: 520px;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+}
+
+/* Primary CTA: visible weight, not a whisper */
+.hero-invitation {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    color: #f5e2c9;
+    border-radius: 26px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: 0 8px 24px rgba(70,34,84,0.25);
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+}
+
+.hero-invitation:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(70,34,84,0.32);
+    background: linear-gradient(135deg, #3A1C42 0%, #4A2554 50%, #5A2D66 100%);
+}
+
+.hero-invitation::after {
+    display: none; /* remove whisper underline */
+}
+
+.hero-essence {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* Sacred Gallery (Center) */
+/* Central image composition: strong hero + supportive secondaries */
+.gallery-primary {
+    grid-row: 1;
+    height: 100%;
+}
+
+.gallery-secondary {
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    height: 100%;
+}
+
+.gallery-primary {
+    grid-row: 1;
+    height: 100%;
+}
+
+.gallery-secondary {
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    height: 100%;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1), filter 0.35s ease, opacity 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    object-fit: cover;
+    object-position: center;
+    background-color: #f5e2c9; /* match canvas behind transparent PNGs */
+}
+
+.gallery-image.primary {
+    animation: gentleArrive 0.9s ease-out 0.3s forwards;
+    aspect-ratio: 5 / 7; /* elegant tall */
+}
+
+.gallery-image.secondary:nth-child(1) {
+    animation: gentleArrive 0.9s ease-out 0.5s forwards;
+    aspect-ratio: 4 / 5;
+}
+
+.gallery-image.secondary:nth-child(2) {
+    animation: gentleArrive 0.9s ease-out 0.6s forwards;
+    aspect-ratio: 4 / 5;
+}
+
+.gallery-image:hover {
+    transform: translateY(-5px) scale(1.02);
+    filter: drop-shadow(12px 18px 35px rgba(70, 34, 84, 0.25));
+}
+
+/* Free-form decorative asset on the left (not in a column) */
+.hero-freeform-left {
+    position: absolute;
+    left: max(2vw, 10px);
+    top: 50%;
+    transform: translateY(-50%) rotate(-2deg);
+    width: min(28vw, 360px);
+    height: auto;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    filter: drop-shadow(0 8px 24px rgba(75, 59, 97, 0.18));
+    animation: artFloatInLeft 1200ms cubic-bezier(0.2, 0.7, 0, 1) 300ms forwards;
+}
+
+/* Adjust for smaller laptops so it doesn’t crowd the text */
+@media (max-width: 1200px) {
+    .hero-freeform-left {
+        width: min(34vw, 320px);
+        left: max(1.5vw, 8px);
+        transform: translateY(-50%) rotate(-1deg);
+        opacity: 0.95;
+    }
+}
+
+/* Mobile: keep it free-form, smaller, slightly higher */
+@media (max-width: 768px) {
+    .hero-freeform-left {
+        width: min(46vw, 260px);
+        left: max(1.5vw, 6px);
+        top: 42%;
+        transform: translateY(-50%) rotate(0deg);
+        opacity: 0.9;
+    }
+}
+
+/* Free-form ornament above the rose (bottom-right cluster) */
+/* Place around 60% from left and 40% from top (viewport-ish), a bit more to the right */
+.hero-freeform-ornament {
+    position: absolute;
+    left: 82%;
+    top: 20%;
+    transform: translate(-50%, -50%);
+    width: min(18vw, 260px);
+    height: auto;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    filter: drop-shadow(0 10px 26px rgba(75, 59, 97, 0.22));
+    animation: artFloatInRight 1200ms cubic-bezier(0.2, 0.7, 0, 1) 420ms forwards;
+}
+
+/* Free-form rose bottom-right, rotated toward right */
+.hero-freeform-rose {
+    position: absolute;
+    right: max(2vw, 10px);
+    bottom: max(2vh, 12px);
+    transform: rotate(28deg); /* tilt to lay towards the right */
+    width: min(22vw, 300px);
+    height: auto;
+    pointer-events: none;
+    z-index: 1; /* behind the text stack */
+    opacity: 0.9;
+    filter:
+      drop-shadow(0 10px 26px rgba(75, 59, 97, 0.2))
+      sepia(1) saturate(0.6) hue-rotate(270deg)
+      brightness(0.9) contrast(1.05);
+    mix-blend-mode: multiply; /* blend tint with background */
+}
+
+/* Optional: a precise color overlay using a pseudo-element for consistent tint */
+.hero-freeform-rose::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #5811bc;
+    opacity: 0.22; /* subtle tint strength */
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
+/* Laptop adjustments: keep near 60%/40% but scale slightly */
+@media (max-width: 1200px) {
+    .hero-freeform-ornament {
+        left: 82%;
+        top: 22%;
+        transform: translate(-50%, -50%);
+        width: min(20vw, 240px);
+        opacity: 0.96;
+    }
+    .hero-freeform-rose {
+        width: min(26vw, 260px);
+        right: max(1.5vw, 8px);
+        bottom: max(2vh, 10px);
+        transform: rotate(24deg);
+    }
+}
+
+/* Mobile: position similarly but nudge for smaller viewport */
+@media (max-width: 768px) {
+    .hero-freeform-ornament {
+        left: 44%;
+        top: 28%;
+        transform: translate(-50%, -50%) rotate(5deg);
+        width: min(36vw, 220px);
+        opacity: 0.98;
+    }
+    .hero-freeform-rose {
+        width: min(40vw, 220px);
+        right: max(2vw, 8px);
+        bottom: max(3vh, 18px);
+        transform: rotate(16deg);
+        opacity: 0.95;
+    }
+}
+
+/* Title for minimal hero */
+.hero-title, .hero-statement {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 700;
+    color: #4b3b61;
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: titleArrive 900ms cubic-bezier(0.2, 0.7, 0, 1) 350ms forwards;
+    will-change: transform, opacity;
+}
+
+/* Subtitle under title: all caps, lighter weight, slightly more tracking */
+/* Subtitle: tighter vertical rhythm, elongated letterforms (tracking) */
+.hero-subtitle {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-size: clamp(0.95rem, 2.2vw, 1.2rem); /* slightly larger */
+    font-weight: 600; /* lighter than title’s 700 */
+    color: #4b3b61;
+    line-height: 1.2; /* tighter line-height */
+    letter-spacing: 0.22em; /* longer letters via increased tracking */
+    margin-top: 4px; /* reduce space under title */
+    text-transform: uppercase;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: subtleRise 900ms cubic-bezier(0.2, 0.7, 0, 1) 520ms forwards;
+}
+
+/* No description in minimal hero */
+.hero-description { display: none !important; }
+
+/* No CTA in minimal hero */
+.hero-invitation { display: none !important; }
+
+.hero-invitation::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, #282626, rgba(70,34,84,0.6));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.hero-invitation:hover {
+    color: #282626;
+}
+
+.hero-invitation:hover::after {
+    transform: scaleX(1);
+}
+
+/* Right rail – increase legibility and intent */
+.hero-sacred-info {
+    grid-column: 10 / span 2;
+    justify-self: stretch;
+    align-self: start;
+    margin-top: 0;
+}
+
+.sacred-details {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-left: 16px;
+    border-left: 2px solid rgba(70, 34, 84, 0.18);
+}
+
+.detail-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #5c4f4f;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+}
+
+.detail-value {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #2f2b2b;
+    line-height: 1.4;
+}
+
+.sacred-details {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding-left: 14px;
+    border-left: 1px solid rgba(70, 34, 84, 0.15);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.detail-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #998B8B;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+}
+
+.detail-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 300;
+    color: #3a3838;
+    line-height: 1.35;
+}
+
+@keyframes gentleArrive {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Section divider to ground the hero and stop the 'void' */
+.philosophy {
+    padding: 120px 0;
+    background:
+        radial-gradient(60% 60% at 50% 0%, rgba(70,34,84,0.06) 0%, rgba(70,34,84,0.02) 55%, rgba(245,226,201,0) 80%),
+        linear-gradient(135deg, #f0ebe0 0%, #eddec4 100%);
+}
+
+.philosophy-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.philosophy-text p {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: #4A4A4A;
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* Products Section */
+.rituals {
+    padding: 100px 0;
+}
+
+.section-title {
+    text-align: center;
+    color: #4b3b61;
+    margin-bottom: 1rem;
+}
+
+.section-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #4b3b61;
+    margin-bottom: 4rem;
+    font-weight: 300;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.product-card {
+    background: #f5e2c9; /* match */
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(70, 34, 84, 0.08);
+    border: 1px solid rgba(70, 34, 84, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(70, 34, 84, 0.15);
+}
+
+.product-image {
+    margin-bottom: 1.5rem;
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 220px;
+    background-color: #f5e2c9; /* unify product placeholders with canvas */
+    border: 1px dashed rgba(70, 34, 84, 0.18);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7f6b52;
+    font-style: italic;
+}
+
+.product-name {
+    color: #4b3b61;
+    margin-bottom: 1rem;
+}
+
+.product-description {
+    color: #4b3b61;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.product-price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4b3b61;
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.product-cta {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+}
+
+/* USP Section */
+.usp {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #f0ebe0 0%, #eddec4 100%);
+}
+
+.usp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.usp-item {
+    text-align: center;
+    padding: 2rem;
+}
+
+.usp-item i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #462254 0%, #5A2D66 50%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+}
+
+.usp-item h3 {
+    color: #4b3b61;
+    margin-bottom: 1rem;
+}
+
+.usp-item p {
+    color: #4b3b61;
+    font-weight: 300;
+    line-height: 1.7;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 100px 0;
+}
+
+.testimonial {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.testimonial p {
+    font-size: 1.4rem;
+    font-style: italic;
+    color: #4b3b61;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    font-weight: 300;
+}
+
+.testimonial cite {
+    font-size: 1rem;
+    color: #4b3b61;
+    font-style: normal;
+    font-weight: 500;
+}
+
+/* Email Signup Section */
+.inner-circle {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #f0ebe0 0%, #eddec4 100%);
+}
+
+.inner-circle .section-title {
+    margin-bottom: 1rem;
+}
+
+.inner-circle .section-intro {
+    margin-bottom: 3rem;
+}
+
+.signup-form {
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto;
+    gap: 1rem;
+}
+
+.signup-form input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 2px solid rgba(70, 34, 84, 0.12);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    background-color: #f5e2c9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.signup-form input:focus {
+    outline: none;
+    border-color: #462254;
+    box-shadow: 0 0 0 3px rgba(70, 34, 84, 0.1);
+}
+
+.signup-form button {
+    white-space: nowrap;
+}
+
+/* Footer */
+.footer {
+    padding: 60px 0 40px;
+    background-color: #2D2D2D;
+    color: #eddec4;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.social-links a {
+    background: linear-gradient(135deg, #462254 0%, #5A2D66 50%, #D4AF37 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: linear-gradient(135deg, #3A1C42 0%, #4A2554 50%, #C19B26 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transform: translateY(-2px);
+}
+
+.footer-info {
+    text-align: right;
+}
+
+.footer-info a {
+    color: #4b3b61;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-info a:hover {
+    color: #4b3b61;
+    opacity: 0.85;
+}
+
+.footer-info p {
+    margin-top: 0.5rem;
+    color: #4b3b61;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* MacBook tuning: a touch more central weight and spacing */
+@media (min-width: 1200px) and (max-width: 1500px) {
+    .hero { padding: 72px 0; }
+    .hero-content {
+        padding: 0 56px;
+        gap: 28px;
+    }
+    .hero-gallery { max-width: 600px; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    /* Mobile-first hero: vertical stack, safe paddings */
+    .hero {
+        min-height: 100vh;
+        padding: 48px 20px 56px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        text-align: center;
+        overflow: hidden; /* hide overflow from freeform art */
+    }
+
+    /* Scale down hero text with subtle entrance preserved */
+    .hero-title, .hero-statement {
+        font-size: clamp(2rem, 10vw, 3rem);
+        letter-spacing: 0.04em;
+        line-height: 1.08;
+        animation-duration: 800ms;
+        animation-delay: 240ms;
+    }
+    .hero-subtitle {
+        font-size: clamp(0.82rem, 3.2vw, 0.95rem);
+        letter-spacing: 0.18em;
+        line-height: 1.25;
+        margin-top: 2px;
+        animation-duration: 820ms;
+        animation-delay: 360ms;
+    }
+    .hero-underline {
+        width: 88px;
+        margin: 8px auto 6px;
+        animation-delay: 520ms;
+    }
+    .hero-domain {
+        font-size: clamp(0.7rem, 3vw, 0.85rem);
+        letter-spacing: 0.16em;
+        margin-top: 0;
+        animation-delay: 620ms;
+    }
+.hero-underline {
+    display: inline-block;
+    width: 120px;            /* small, understated */
+    height: 1px;
+    background-color: #4b3b61; /* match text color */
+    opacity: 0.0;            /* animate in */
+    margin: 10px auto 8px;   /* spacing around line */
+    z-index: 2;
+    transform-origin: left;
+    transform: scaleX(0.82);
+    animation: lineReveal 900ms ease-out 700ms forwards;
+}
+
+    /* Reposition freeform images to avoid overlaps and keep them decorative */
+    .hero-freeform-left {
+        width: min(52vw, 220px);
+        left: -6vw;                   /* push partially off-canvas left */
+        top: 28%;
+        transform: translateY(-50%) rotate(-1deg);
+        opacity: 0.85;
+        z-index: 0;
+    }
+
+    .hero-freeform-ornament {
+        left: 78%;
+        top: 26%;
+        transform: translate(-50%, -50%) rotate(4deg);
+        width: min(36vw, 180px);
+        opacity: 0.9;
+        z-index: 0;
+    }
+
+    .hero-freeform-rose {
+        width: min(54vw, 220px);
+        right: -8vw;                  /* push partially off-canvas right */
+        bottom: 2vh;
+        transform: rotate(12deg);
+        opacity: 0.9;
+        z-index: 0;                   /* always behind text */
+    }
+
+    /* Badge: pull inwards and reduce size to sit near dropper area */
+    .hero-badge-bottom-left {
+        left: 6vw;
+        bottom: 18vh;                 /* raise from bottom to avoid keyboard/safe-area */
+    }
+    .hero-badge-bottom-left span {
+        font-size: clamp(0.72rem, 2.8vw, 0.9rem);
+        letter-spacing: 0.18em;
+    }
+
+    /* Footer and others remain stacked */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-info {
+        text-align: center;
+    }
+
+    /* Legacy layout pieces not used on mobile hero are neutralized */
+    .hero-main,
+    .hero-gallery,
+    .hero-sacred-info,
+    .gallery-secondary,
+    .gallery-image {
+        all: unset;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra-tight safety for very small screens */
+    .hero {
+        padding: 40px 14px 48px;
+        gap: 10px;
+    }
+    .hero-title, .hero-statement {
+        font-size: clamp(1.8rem, 10.5vw, 2.6rem);
+        letter-spacing: 0.04em;
+        line-height: 1.06;
+    }
+    .hero-subtitle {
+        font-size: clamp(0.74rem, 3.4vw, 0.88rem);
+        letter-spacing: 0.18em;
+        line-height: 1.22;
+    }
+    .hero-underline {
+        width: 74px;
+        margin: 6px auto 4px;
+    }
+    .hero-domain {
+        font-size: clamp(0.66rem, 3.2vw, 0.8rem);
+        letter-spacing: 0.15em;
+    }
+
+    .hero-freeform-left {
+        width: min(58vw, 200px);
+        left: -10vw;
+        top: 26%;
+        transform: translateY(-50%) rotate(0deg);
+        opacity: 0.85;
+    }
+    .hero-freeform-ornament {
+        left: 76%;
+        top: 24%;
+        transform: translate(-50%, -50%) rotate(2deg);
+        width: min(40vw, 160px);
+        opacity: 0.9;
+    }
+    .hero-freeform-rose {
+        width: min(60vw, 200px);
+        right: -10vw;
+        bottom: 1vh;
+        transform: rotate(10deg);
+        opacity: 0.9;
+    }
+
+    .hero-badge-bottom-left {
+        left: 8vw;
+        bottom: 16vh;
+    }
+    .hero-badge-bottom-left span {
+        font-size: clamp(0.7rem, 3.2vw, 0.85rem);
+    }
+} /* <-- properly close the @media (max-width: 480px) block */
+
+/* Classy motion system */
+@keyframes veilFade {
+    0% { opacity: 0; transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes titleArrive {
+    0% { opacity: 0; transform: translateY(10px); letter-spacing: 0.04em; }
+    60% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 1; transform: translateY(0); letter-spacing: 0.06em; }
+}
+@keyframes subtleRise {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes lineReveal {
+    0% { opacity: 0; transform: scaleX(0.82); }
+    100% { opacity: 0.6; transform: scaleX(1); }
+}
+@keyframes artFloatInLeft {
+    0% { opacity: 0; transform: translate(-30px, -50%) rotate(-3deg); }
+    100% { opacity: 0.9; transform: translate(0, -50%) rotate(-2deg); }
+}
+@keyframes artFloatInRight {
+    0% { opacity: 0; transform: translate(-50%, -50%) translateX(30px) rotate(6deg); }
+    100% { opacity: 0.95; transform: translate(-50%, -50%) rotate(8deg); }
+}
+@keyframes artFloatInUp {
+    0% { opacity: 0; transform: translateY(20px) rotate(32deg); }
+    100% { opacity: 0.9; transform: translateY(0) rotate(28deg); }
+}
+@keyframes badgeFade {
+    0% { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Gentle idle parallax for freeform art on larger screens */
+@media (hover: hover) and (min-width: 769px) {
+    .hero-freeform-left { animation: artFloatInLeft 1200ms cubic-bezier(0.2, 0.7, 0, 1) 300ms forwards, idleDriftLeft 8s ease-in-out 2.2s infinite alternate; }
+    .hero-freeform-ornament { animation: artFloatInRight 1200ms cubic-bezier(0.2, 0.7, 0, 1) 420ms forwards, idleDriftUp 10s ease-in-out 2.6s infinite alternate; }
+    .hero-freeform-rose { animation: artFloatInUp 1200ms cubic-bezier(0.2, 0.7, 0, 1) 520ms forwards, idleDriftRight 9s ease-in-out 2.8s infinite alternate; }
+    @keyframes idleDriftLeft { from { transform: translateY(-50%) rotate(-2.4deg); } to { transform: translateY(calc(-50% - 2px)) rotate(-1.6deg); } }
+    @keyframes idleDriftUp { from { transform: translate(-50%, -50%) rotate(7.6deg); } to { transform: translate(calc(-50% + 2px), calc(-50% - 2px)) rotate(8.4deg); } }
+    @keyframes idleDriftRight { from { transform: rotate(27.6deg) translateY(0); } to { transform: rotate(28.4deg) translateY(-2px); } }
+}
