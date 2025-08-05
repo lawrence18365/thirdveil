@@ -45,6 +45,36 @@ document.addEventListener('DOMContentLoaded', function() {
     preloaderVideo.setAttribute('webkit-playsinline', ''); // extra-safe for older iOS
     preloaderVideo.playsInline = true;
     preloaderVideo.autoplay = true;
+    
+    // Aggressively prevent any video controls from appearing
+    preloaderVideo.controls = false;
+    preloaderVideo.setAttribute('controls', 'false');
+    preloaderVideo.removeAttribute('controls');
+    preloaderVideo.setAttribute('disablepictureinpicture', '');
+    preloaderVideo.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+    
+    // Force remove any control elements that Chrome might add
+    const forceRemoveControls = () => {
+        preloaderVideo.controls = false;
+        preloaderVideo.removeAttribute('controls');
+        
+        // Hide any shadow DOM controls
+        const shadowRoot = preloaderVideo.shadowRoot;
+        if (shadowRoot) {
+            const controls = shadowRoot.querySelectorAll('*');
+            controls.forEach(control => {
+                if (control.style) {
+                    control.style.display = 'none';
+                    control.style.opacity = '0';
+                    control.style.visibility = 'hidden';
+                }
+            });
+        }
+    };
+    
+    // Continuously enforce no controls
+    forceRemoveControls();
+    setInterval(forceRemoveControls, 100);
 
     // Try to autoplay immediately
     const attemptPlay = () => preloaderVideo.play().catch(() => Promise.reject());
