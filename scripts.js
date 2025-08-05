@@ -2,11 +2,11 @@
  * Home page preloader: play full video, then reveal content.
  * Only runs if #preloader exists (i.e., on index.html).
  *
- * Mobile-specific improvements:
- * - Ensure muted, inline autoplay on iOS (no big play button).
- * - Programmatic play() attempt; on failure, one-time user-gesture fallback.
- * - Reveal site sooner on mobile (best default: short branded moment, then fade).
- * Desktop behavior is preserved: wait for full video end before reveal.
+ * Universal experience (503KB optimized):
+ * - All devices get the complete beautiful animation
+ * - Ensure muted, inline autoplay on iOS (no big play button)
+ * - Programmatic play() attempt; on failure, one-time user-gesture fallback
+ * - Wait for full video completion before revealing site
  */
 document.addEventListener('DOMContentLoaded', function() {
     const preloader = document.getElementById('preloader');
@@ -77,46 +77,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 600); // match CSS transition
     };
 
-    // Desktop behavior: wait for full video end (unchanged)
-    const setupDesktopFlow = () => {
+    // All devices now get the full beautiful animation experience
+    // With 503KB optimization, mobile can handle the complete video
+    const setupFullVideoFlow = () => {
         const finish = () => {
             reveal();
         };
         preloaderVideo.addEventListener('ended', finish);
 
         // Robustness fallback in case 'ended' never fires
-        const DESKTOP_FALLBACK_MS = 12000;
+        const FALLBACK_MS = 3800;
         const fallbackTimer = setTimeout(() => {
             preloaderVideo.removeEventListener('ended', finish);
             reveal();
-        }, DESKTOP_FALLBACK_MS);
+        }, FALLBACK_MS);
         preloaderVideo.addEventListener('ended', () => clearTimeout(fallbackTimer));
     };
 
-    // Mobile behavior: best default
-    // - Ensure playback starts (muted inline). If blocked, add one-time gesture kick.
-    // - Show preloader briefly, then reveal site after short timeout (faster than waiting full video).
-    const setupMobileFlow = () => {
-        // Attempt autoplay; if blocked, wire the gesture fallback
-        attemptPlay().catch(() => addUserGestureKick());
-
-        // Short, branded preloader experience then reveal.
-        // Tune as desired; chosen to balance brand moment and quick access.
-        const MOBILE_REVEAL_MS = 2500;
-        const timer = setTimeout(reveal, MOBILE_REVEAL_MS);
-
-        // If user taps and playback begins immediately, we still keep the short timer.
-        // Optional: if you want to reveal on first frame, listen to 'playing' and reduce delay.
-        // preloaderVideo.addEventListener('playing', () => { /* optionally adjust */ }, { once: true });
-    };
-
-    if (isMobile) {
-        setupMobileFlow();
-    } else {
-        setupDesktopFlow();
-        // Also attempt autoplay on desktop; it's already working per user, but harmless to ensure muted state.
-        attemptPlay().catch(() => { /* desktop typically allows, ignore if blocked */ });
-    }
+    // Universal flow - everyone gets the full branded experience
+    setupFullVideoFlow();
+    
+    // Ensure autoplay works on all devices
+    attemptPlay().catch(() => {
+        if (isMobile) {
+            addUserGestureKick();
+        }
+    });
 });
 
 // Smooth scrolling function
