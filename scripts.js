@@ -17,9 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!preloader || !preloaderVideo) {
         if (mainContent) {
             mainContent.classList.remove('hidden');
-            mainContent.style.display = 'flex';
-            mainContent.style.opacity = '1';
-            mainContent.style.visibility = 'visible';
             mainContent.removeAttribute('aria-hidden');
         }
         return;
@@ -27,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Prepare main content to be shown after video completes
     if (mainContent) {
-        mainContent.style.display = 'none';
+        mainContent.classList.add('hidden');
         mainContent.setAttribute('aria-hidden', 'true');
     }
 
@@ -158,16 +155,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reveal logic shared by desktop/mobile
     const reveal = () => {
         preloader.classList.add('is-hidden');
+        
+        // Show main content with smooth entrance
+        if (mainContent) {
+            mainContent.classList.remove('hidden');
+            mainContent.removeAttribute('aria-hidden');
+        }
+        
+        // Remove preloader from DOM after animation completes
         setTimeout(() => {
-            if (mainContent) {
-                mainContent.classList.remove('hidden');
-                mainContent.style.display = 'flex';
-                mainContent.style.opacity = '1';
-                mainContent.style.visibility = 'visible';
-                mainContent.removeAttribute('aria-hidden');
-            }
             if (preloader && preloader.parentNode) preloader.parentNode.removeChild(preloader);
-        }, 600); // match CSS transition
+        }, 1400); // match CSS transition duration
     };
 
     // All devices now get the full beautiful animation experience

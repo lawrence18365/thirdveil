@@ -16,25 +16,30 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Preloader: Home page only, plays full video then reveals site -->
+    <!-- Preloader: Smart detection - video for desktop, animation for mobile -->
     <div id="preloader" class="preloader" role="status" aria-label="Loading Third Veil">
+      <!-- Video for desktop (hidden on mobile) -->
       <video 
         id="preloaderVideo" 
-        class="preloader-video" 
+        class="preloader-video desktop-only" 
         src="media/preloader.mp4" 
         preload="auto" 
         muted 
         playsinline 
-        webkit-playsinline 
-        x5-playsinline
-        x5-video-player-type="h5"
-        x5-video-player-fullscreen="false"
-        autoplay 
-        disablepictureinpicture 
-        disableremoteplayback
-        controlslist="nodownload nofullscreen noremoteplayback"
-        style="pointer-events: none; -webkit-tap-highlight-color: transparent;"
+        autoplay
       ></video>
+      <!-- Elegant animation for mobile (hidden on desktop) -->
+      <div id="mobilePreloader" class="mobile-preloader mobile-only">
+        <div class="preloader-logo-container">
+          <div class="preloader-text">
+            <span class="preloader-text-line">THIRD</span>
+            <span class="preloader-text-line">VEIL</span>
+          </div>
+          <div class="preloader-pulse"></div>
+          <div class="preloader-pulse delay"></div>
+        </div>
+        <div class="preloader-tagline">AWAKENING THE SACRED</div>
+      </div>
     </div>
     <main id="main-content" class="hidden" aria-hidden="true">
         <section id="hero" class="hero hero--center-only" aria-label="Third Veil hero">
@@ -70,7 +75,7 @@
               <span>LIMITED<br>DROPS</span>
             </div>
             <div class="hero-stack">
-                <h1 class="hero-title">THIRD<br> VEIL</h1>
+                <img src="https://i.postimg.cc/T3my9jqL/third-veil-logo-precise.png" alt="Third Veil Logo" class="hero-logo" loading="eager" decoding="async">
                 <p class="hero-subtitle">
                     ORGANIC-INFUSED <br>
                     HOME & BODY RITUALS

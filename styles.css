@@ -11,7 +11,7 @@ body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
     color: #4b3b61; /* global text color */
-    background-color: #f5e2c9; /* match loader + assets */
+    background-color: #fef5d8;
     background-image: none;
     background-repeat: no-repeat;
     overflow-x: hidden;
@@ -27,13 +27,25 @@ body {
     visibility: hidden;
 }
 
+/* Main Content Smooth Entrance */
+#main-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s;
+}
+
+#main-content:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Enhanced Preloader Styles with Mobile Fallback */
 .preloader {
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
-    background-color: #ede6d2; /* requested preloader background */
+    background-color: #eee6d2;
     display: flex !important;
     justify-content: center;
     align-items: center;
@@ -44,9 +56,30 @@ body {
 }
 
 .preloader.is-hidden {
-    opacity: 0;
-    visibility: hidden;
+    opacity: 1;
+    visibility: visible;
     pointer-events: none;
+    transform: translateY(-100vh);
+    transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Device-specific display classes with higher specificity */
+.preloader .desktop-only {
+    display: block !important;
+}
+
+.preloader .mobile-only {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .preloader .desktop-only {
+        display: none !important;
+    }
+    
+    .preloader .mobile-only {
+        display: block !important;
+    }
 }
 
 /* Video preloader for desktop */
@@ -166,6 +199,82 @@ video::-webkit-media-controls-overlay-play-button {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
+}
+
+/* Mobile preloader styles */
+.mobile-preloader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.preloader-logo-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.preloader-text {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 600;
+    color: #4b3b61;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.preloader-text-line {
+    display: block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: textLineFade 2s ease-in-out infinite;
+}
+
+.preloader-text-line:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.preloader-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border: 2px solid rgba(75, 59, 97, 0.3);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.preloader-pulse.delay {
+    animation-delay: 1s;
+    border-color: rgba(75, 59, 97, 0.2);
+}
+
+.preloader-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #4b3b61;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+@keyframes textLineFade {
+    0%, 100% { opacity: 0.6; transform: translateY(5px); }
+    50% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
 }
 
 /* Mobile fallback animation container */
@@ -313,7 +422,6 @@ p {
 .hero-stack {
     display: flex;
     flex-direction: column;
-    gap: 4px; /* tighter pairing between title and subtitle */
     align-items: center;
     position: relative;
     z-index: 2; /* above decorative asset */
@@ -391,17 +499,6 @@ p {
     opacity: 0;
     transform: translateY(6px);
     animation: subtleRise 900ms cubic-bezier(0.2, 0.7, 0, 1) 820ms forwards;
-}
-
-/* Ambient vignette and soft reveal */
-.hero::before {
-    content: "";
-    position: absolute;
-    inset: -8% -6% -6% -6%;
-    background: radial-gradient(60% 50% at 50% 35%, rgba(75, 59, 97, 0.10) 0%, rgba(75, 59, 97, 0.06) 40%, rgba(245, 226, 201, 0) 75%);
-    opacity: 0;
-    transform: scale(1.03);
-    animation: veilFade 1.8s ease-out 0.2s forwards;
 }
 
 /* Not used in minimal hero, keep harmless but neutralize spacing */
@@ -523,7 +620,7 @@ p {
     transform: translateY(20px);
     object-fit: cover;
     object-position: center;
-    background-color: #f5e2c9; /* match canvas behind transparent PNGs */
+    background-color: #fef5d8;
 }
 .gallery-image.primary {
     animation: gentleArrive 0.9s ease-out 0.3s forwards;
@@ -675,8 +772,23 @@ p {
     will-change: transform, opacity;
 }
 
+/* Logo replacement for hero title */
+.hero-logo {
+    width: clamp(200px, 35vw, 420px); /* reduced from 280px-600px to 200px-420px */
+    height: auto;
+    max-width: 100%;
+    margin: 0 auto;
+    display: block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: titleArrive 900ms cubic-bezier(0.2, 0.7, 0, 1) 350ms forwards;
+    will-change: transform, opacity;
+    object-fit: contain;
+}
+
 /* Subtitle under title: all caps, lighter weight, slightly more tracking */
 /* Subtitle: tighter vertical rhythm, elongated letterforms (tracking) */
+/* Subtitle overlaps logo due to transparency */
 .hero-subtitle {
     font-family: 'Cinzel', 'Playfair Display', serif;
     font-size: clamp(0.95rem, 2.2vw, 1.2rem); /* slightly larger */
@@ -684,7 +796,7 @@ p {
     color: #4b3b61;
     line-height: 1.2; /* tighter line-height */
     letter-spacing: 0.22em; /* longer letters via increased tracking */
-    margin-top: 4px; /* reduce space under title */
+    margin-top: -25px; /* overlap logo significantly */
     text-transform: uppercase;
     text-align: center;
     opacity: 0;
@@ -823,7 +935,7 @@ p {
     margin: 0 auto;
 }
 .product-card {
-    background: #f5e2c9; /* match */
+    background: #fef5d8;
     border-radius: 10px;
     padding: 2rem;
     text-align: center;
@@ -841,7 +953,7 @@ p {
 .placeholder-image {
     width: 100%;
     height: 220px;
-    background-color: #f5e2c9; /* unify product placeholders with canvas */
+    background-color: #fef5d8;
     border: 1px dashed rgba(70, 34, 84, 0.18);
     border-radius: 8px;
     display: flex;
@@ -954,7 +1066,7 @@ p {
     border-radius: 6px;
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
-    background-color: #f5e2c9;
+    background-color: #fef5d8;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .signup-form input:focus {
@@ -1064,11 +1176,20 @@ p {
         animation-duration: 800ms;
         animation-delay: 240ms;
     }
+    
+    /* Mobile logo sizing - much smaller */
+    .hero-logo {
+        width: clamp(160px, 55vw, 280px); /* reduced from 220px-400px to 160px-280px */
+        animation-duration: 800ms;
+        animation-delay: 240ms;
+    }
+    
+
     .hero-subtitle {
         font-size: clamp(0.82rem, 3.2vw, 0.95rem);
         letter-spacing: 0.18em;
         line-height: 1.25;
-        margin-top: 2px;
+        margin-top: -20px; /* overlap logo on mobile too */
         animation-duration: 820ms;
         animation-delay: 360ms;
     }
@@ -1153,6 +1274,11 @@ p {
         font-size: clamp(1.8rem, 10.5vw, 2.6rem);
         letter-spacing: 0.04em;
         line-height: 1.06;
+    }
+    
+    /* Extra small mobile logo sizing */
+    .hero-logo {
+        width: clamp(180px, 80vw, 320px);
     }
     .hero-subtitle {
         font-size: clamp(0.74rem, 3.4vw, 0.88rem);

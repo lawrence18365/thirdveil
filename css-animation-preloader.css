@@ -1,0 +1,159 @@
+/* CSS-Only Preloader Animation Solution */
+/* Replace video with a static brand image + CSS animations */
+
+.preloader-logo-animated {
+    max-width: min(42vw, 360px);
+    width: clamp(220px, 38vw, 360px);
+    height: auto;
+    position: relative;
+    animation: logoReveal 3s ease-out forwards;
+}
+
+/* Multi-stage animation mimicking video */
+@keyframes logoReveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+        filter: blur(10px);
+    }
+    15% {
+        opacity: 0.3;
+        transform: scale(0.85) rotate(-3deg);
+        filter: blur(8px);
+    }
+    30% {
+        opacity: 0.6;
+        transform: scale(0.9) rotate(-1deg);
+        filter: blur(5px);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(0.95) rotate(0deg);
+        filter: blur(2px);
+    }
+    70% {
+        opacity: 0.95;
+        transform: scale(1.02) rotate(0deg);
+        filter: blur(0px);
+    }
+    85% {
+        opacity: 1;
+        transform: scale(1.01) rotate(0deg);
+        filter: blur(0px) brightness(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        filter: blur(0px) brightness(1);
+    }
+}
+
+/* Shimmer effect overlay */
+.preloader-logo-animated::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        105deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 60%
+    );
+    animation: shimmer 2s ease-out 0.5s;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%) translateY(-100%);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%);
+    }
+}
+
+/* Pulsing glow effect */
+.preloader-logo-animated::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        rgba(75, 59, 97, 0.1) 0%,
+        transparent 70%
+    );
+    animation: pulse 2s ease-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+/* Alternative: Sophisticated text animation if no logo image */
+.preloader-text-animated {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: #4b3b61;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    position: relative;
+    overflow: hidden;
+}
+
+.preloader-text-animated span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: letterReveal 0.6s ease-out forwards;
+}
+
+/* Stagger each letter */
+.preloader-text-animated span:nth-child(1) { animation-delay: 0.1s; }
+.preloader-text-animated span:nth-child(2) { animation-delay: 0.2s; }
+.preloader-text-animated span:nth-child(3) { animation-delay: 0.3s; }
+.preloader-text-animated span:nth-child(4) { animation-delay: 0.4s; }
+.preloader-text-animated span:nth-child(5) { animation-delay: 0.5s; }
+.preloader-text-animated span:nth-child(6) { animation-delay: 0.6s; }
+.preloader-text-animated span:nth-child(7) { animation-delay: 0.7s; }
+.preloader-text-animated span:nth-child(8) { animation-delay: 0.8s; }
+.preloader-text-animated span:nth-child(9) { animation-delay: 0.9s; }
+.preloader-text-animated span:nth-child(10) { animation-delay: 1.0s; }
+
+@keyframes letterReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Elegant line animation below text */
+.preloader-line {
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4b3b61, transparent);
+    margin: 20px auto 0;
+    animation: lineExpand 1.5s ease-out 1.2s forwards;
+}
+
+@keyframes lineExpand {
+    to {
+        width: 200px;
+    }
+}
