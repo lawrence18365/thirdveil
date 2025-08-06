@@ -38,61 +38,122 @@ document.addEventListener('DOMContentLoaded', function() {
     const isIOS = /iphone|ipad|ipod/.test(ua);
     const isMobile = isSmallViewport || isIOS;
 
-    // Ensure video is configured for inline autoplay (esp. iOS)
+    // COMPREHENSIVE iOS FIX: Multiple layers of defense against play button
+    
+    // Layer 1: Essential attributes for iOS autoplay
     preloaderVideo.setAttribute('muted', '');
     preloaderVideo.muted = true;
     preloaderVideo.setAttribute('playsinline', '');
-    preloaderVideo.setAttribute('webkit-playsinline', ''); // extra-safe for older iOS
+    preloaderVideo.setAttribute('webkit-playsinline', '');
+    preloaderVideo.setAttribute('x5-playsinline', ''); // For some Android browsers
     preloaderVideo.playsInline = true;
     preloaderVideo.autoplay = true;
+    preloaderVideo.defaultMuted = true; // Extra insurance
     
-    // Aggressively prevent any video controls from appearing
+    // Layer 2: Disable all forms of controls
     preloaderVideo.controls = false;
-    preloaderVideo.setAttribute('controls', 'false');
     preloaderVideo.removeAttribute('controls');
     preloaderVideo.setAttribute('disablepictureinpicture', '');
     preloaderVideo.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
     
-    // RESEARCH-BASED: Force removal of overlay play button specifically
-    const destroyOverlayButton = () => {
-        preloaderVideo.controls = false;
-        preloaderVideo.removeAttribute('controls');
-        
-        // Hide any shadow DOM controls
-        const shadowRoot = preloaderVideo.shadowRoot;
-        if (shadowRoot) {
-            const overlayButtons = shadowRoot.querySelectorAll('*[pseudo*="overlay"], *[class*="overlay"], *[class*="play"]');
-            overlayButtons.forEach(button => {
-                if (button.style) {
-                    button.style.display = 'none';
-                    button.style.opacity = '0';
-                    button.style.visibility = 'hidden';
-                    button.style.width = '0';
-                    button.style.height = '0';
+    // Layer 3: Add custom CSS styles programmatically (belt and suspenders)
+    const injectStyles = () => {
+        // Check if styles already injected
+        if (!document.getElementById('ios-video-fix')) {
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'ios-video-fix';
+            styleSheet.innerHTML = `
+                #preloaderVideo {
+                    pointer-events: none !important;
+                    -webkit-tap-highlight-color: transparent !important;
+                    -webkit-touch-callout: none !important;
+                    -webkit-user-select: none !important;
+                    user-select: none !important;
                 }
+                #preloaderVideo::-webkit-media-controls,
+                #preloaderVideo::-webkit-media-controls-container,
+                #preloaderVideo::-webkit-media-controls-start-playback-button,
+                #preloaderVideo::-webkit-media-controls-overlay-play-button,
+                #preloaderVideo::-webkit-media-controls-panel,
+                #preloaderVideo::-webkit-media-controls-play-button,
+                #preloaderVideo::-webkit-media-controls-enclosure {
+                    display: none !important;
+                    opacity: 0 !important;
+                    visibility: hidden !important;
+                    position: absolute !important;
+                    top: -9999px !important;
+                    pointer-events: none !important;
+                    width: 0 !important;
+                    height: 0 !important;
+                    transform: scale(0) !important;
+                }
+                /* iOS-specific using supports */
+                @supports (-webkit-touch-callout: none) {
+                    #preloaderVideo::-webkit-media-controls-start-playback-button {
+                        display: none !important;
+                        -webkit-appearance: none !important;
+                    }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+    };
+    
+    // Layer 4: Create invisible overlay div to block any interaction
+    const createBlocker = () => {
+        const blocker = document.createElement('div');
+        blocker.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            background: transparent;
+            pointer-events: auto;
+        `;
+        preloader.appendChild(blocker);
+        
+        // Prevent all interactions on the blocker
+        blocker.addEventListener('click', (e) => e.preventDefault(), true);
+        blocker.addEventListener('touchstart', (e) => e.preventDefault(), true);
+        blocker.addEventListener('touchend', (e) => e.preventDefault(), true);
+    };
+    
+    // Layer 5: Programmatic play with promise handling
+    const forcePlay = () => {
+        const playPromise = preloaderVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // Video is playing successfully
+                console.log('Video autoplay successful');
+            }).catch(error => {
+                // Autoplay was prevented, try again on first interaction
+                console.log('Autoplay blocked, waiting for user interaction');
+                const playOnInteraction = () => {
+                    preloaderVideo.play();
+                    document.removeEventListener('touchstart', playOnInteraction);
+                    document.removeEventListener('click', playOnInteraction);
+                };
+                document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
+                document.addEventListener('click', playOnInteraction, { once: true });
             });
         }
     };
     
-    // Apply immediately and continuously
-    destroyOverlayButton();
-    setInterval(destroyOverlayButton, 50); // More frequent for stubborn buttons
-
-    // Try to autoplay immediately
-    const attemptPlay = () => preloaderVideo.play().catch(() => Promise.reject());
-
-    // Fallback: kick playback on first user gesture if autoplay was blocked
-    const addUserGestureKick = () => {
-        const kick = () => {
-            preloaderVideo.play().finally(() => {
-                document.removeEventListener('touchstart', kick, { capture: true });
-                document.removeEventListener('click', kick, { capture: true });
-            });
-        };
-        // Use capture to get earliest possible event on iOS Safari
-        document.addEventListener('touchstart', kick, { once: true, capture: true });
-        document.addEventListener('click', kick, { once: true, capture: true });
-    };
+    // Apply all fixes
+    injectStyles();
+    createBlocker();
+    
+    // Try to play immediately and after DOM ready
+    if (document.readyState === 'complete') {
+        forcePlay();
+    } else {
+        window.addEventListener('load', forcePlay);
+    }
+    
+    // Additional attempt after a short delay (iOS sometimes needs this)
+    setTimeout(forcePlay, 100);
 
     // Reveal logic shared by desktop/mobile
     const reveal = () => {
@@ -128,13 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Universal flow - everyone gets the full branded experience
     setupFullVideoFlow();
-    
-    // Ensure autoplay works on all devices
-    attemptPlay().catch(() => {
-        if (isMobile) {
-            addUserGestureKick();
-        }
-    });
 });
 
 // Smooth scrolling function

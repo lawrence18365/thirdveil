@@ -69,33 +69,63 @@ body {
     pointer-events: none;
 }
 
-/* THE SPECIFIC OVERLAY PLAY BUTTON - this is the key selector from research */
-video::-webkit-media-controls-overlay-play-button {
+/* COMPREHENSIVE iOS SAFARI/CHROME VIDEO FIX */
+/* Target all possible shadow DOM elements for video controls */
+video::-webkit-media-controls-overlay-play-button,
+.preloader-video::-webkit-media-controls-overlay-play-button {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
     width: 0 !important;
     height: 0 !important;
+    position: absolute !important;
+    top: -9999px !important;
 }
 
-/* Aggressively hide ALL video controls and play buttons */
-.preloader-video::-webkit-media-controls {
+/* Hide ALL video controls and play buttons */
+.preloader-video::-webkit-media-controls,
+.preloader-video::-webkit-media-controls-container,
+.preloader-video::-webkit-media-controls-enclosure,
+.preloader-video::-webkit-media-controls-panel {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
+    -webkit-appearance: none !important;
 }
 
-.preloader-video::-webkit-media-controls-start-playback-button {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-}
-
+.preloader-video::-webkit-media-controls-start-playback-button,
 .preloader-video::-webkit-media-controls-play-button {
     display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
+    -webkit-appearance: none !important;
+    position: absolute !important;
+    top: -9999px !important;
+    transform: scale(0) !important;
+}
+
+/* iOS-specific targeting using @supports */
+@supports (-webkit-touch-callout: none) {
+    /* iOS only styles */
+    .preloader-video {
+        -webkit-mask-image: -webkit-radial-gradient(white, black);
+        mask-image: radial-gradient(white, black);
+    }
+    
+    .preloader-video::-webkit-media-controls-start-playback-button {
+        display: none !important;
+        -webkit-appearance: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+}
+
+/* Additional nuclear option for stubborn controls */
+.preloader-video::-webkit-media-controls *,
+.preloader-video::-webkit-media-controls-container * {
+    display: none !important;
+    opacity: 0 !important;
 }
 
 .preloader-video::-webkit-media-controls-panel {
